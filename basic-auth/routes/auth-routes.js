@@ -8,8 +8,8 @@ authRoutes.get("/login", (req, res, next) => {
 });
 
 authRoutes.post("/login", (req, res, next) => {
-  var username = req.body.username;
-  var password = req.body.password;
+  const username = req.body.username;
+  const password = req.body.password;
 
   if (username === "" || password === "") {
     res.render("auth/login", {
@@ -27,8 +27,8 @@ authRoutes.post("/login", (req, res, next) => {
         });
         return;
       } else {
-        if (bcrypt.compareSync(password, user.password)) {
-          req.session.currentUser = user;
+        if (bcrypt.compareSync(password, user.password)) { //compares the password submitted to the passord in the db
+          req.session.currentUser = user; //saving info of user as currentUser
           res.redirect("/");
         } else {
           res.render("auth/login", {
@@ -37,6 +37,13 @@ authRoutes.post("/login", (req, res, next) => {
         }
       }
   });
+});
+
+authRoutes.get("/logout", (req, res) => {
+    req.session.destroy(function(err) {
+        // cannot access session here
+        res.redirect("/");
+    });
 });
 
 authRoutes.get('/signup', (req, res, next) => {

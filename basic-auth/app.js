@@ -14,17 +14,7 @@ mongoose.connect('mongodb://localhost/basic-auth');
 
 const app = express();
 
-app.use('/', siteController);
 
-//middleware to enable sessions in Express - this gives us a cookie in our browswer.
-app.use(session({
-  secret: "basic-auth-secret",
-  cookie: { maxAge: null },
-  store: new MongoStore({
-    mongooseConnection: mongoose.connection,
-    ttl: 24 * 60 * 60 // 1 day
-  })
-}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -42,9 +32,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(layouts);
 
-const index = require('./routes/index');
-app.use('/', index);
+//middleware to enable sessions in Express - this gives us a cookie in our browswer.
+app.use(session({
+  secret: "basic-auth-secret",
+  cookie: { maxAge: null },
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 24 * 60 * 60 // 1 day
+  })
+}));
 
+app.use('/', siteController);
 const blah = require('./routes/auth-routes.js');
 app.use('/', blah);
 
